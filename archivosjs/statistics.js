@@ -1,7 +1,9 @@
 let statistics = {
     "numberOfDemocrats": 0,
     "numberOfRepublicans": 0,
-    "numberOfIndependents": 0
+    "numberOfIndependents": 0,
+    "democratAverage": 0,
+    "republicanAverage": 0
 }
 
 let democratList = dataSenate.results[0].members.filter((m) => m.party === "D");
@@ -16,7 +18,30 @@ statistics.numberOfRepublicans = republicanList.length;
 
 statistics.numberOfIndependents = independentList.length;
 
-console.log(statistics)
+let accDemocrats = 0;
+democratList.forEach(m => {
+  accDemocrats = accDemocrats + m.votes_with_party_pct;
+})
+
+let democratAverage = accDemocrats / democratList.length;
+
+statistics.democratAverage = democratAverage;
+
+
+let accRepublicans = 0;
+republicanList.forEach(m => {
+  accRepublicans = accRepublicans + m.votes_with_party_pct;
+})
+
+dataSenate.results[0].members.length;
+
+let republicanAverage = accRepublicans / republicanList.length;
+
+statistics.republicanAverage = republicanAverage;
+
+// Members Who Least Often Vote with Their Party
+
+
 
 
 // let members = dataSenate.results[0].members;
