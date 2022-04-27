@@ -4,6 +4,7 @@ let statistics = {
     numberOfIndependents: 0,
     democratAverage: 0,
     republicanAverage: 0,
+    independentAverage: 0,
     leastLoyal: [], 
     mostLoyal: [],
     leastEngaged: [], 
@@ -18,6 +19,7 @@ statistics.numberOfIndependents = filterByParty(members, "ID").length
 
 statistics.democratAverage = votesWithPartyAverageByParty(filterByParty(members, "D"));
 statistics.republicanAverage = votesWithPartyAverageByParty(filterByParty(members, "R"));
+statistics.independentAverage = votesWithPartyAverageByParty(filterByParty(members, "ID")) || 0;
 
 statistics.leastLoyal = tenPercentLoayaltyExtremeValues("least", [...members]);
 statistics.mostLoyal = tenPercentLoayaltyExtremeValues("most", [...members]);

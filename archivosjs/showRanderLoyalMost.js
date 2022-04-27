@@ -1,0 +1,1 @@
+renderTableLoyalMost(statistics.mostLoyal);

@@ -86,7 +86,8 @@
                                         <th>% Voted with Prty</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="tableAtGlance">
+                                    <!--
                                     <tr>
                                         <td>Republican</td>
                                         <td>--</td>
@@ -107,6 +108,7 @@
                                         <td>--</td>
                                         <td>--</td>
                                     </tr>
+                                    -->
                                 </tbody>
                             </table>
                         </div>
@@ -124,7 +126,8 @@
                                         <th>% Missed</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id = "tableAttendance">
+                                    <!--
                                     <tr>
                                         <td>--</td>
                                         <td>--</td>
@@ -175,6 +178,7 @@
                                         <td>--</td>
                                         <td>--</td>
                                     </tr>
+                                -->
                                 </tbody>
                             </table>
                         </div>
@@ -188,57 +192,8 @@
                                         <th>% Missed</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>--</td>
-                                        <td>--</td>
-                                        <td>--</td>
-                                    </tr>
-                                    <tr>
-                                        <td>--</td>
-                                        <td>--</td>
-                                        <td>--</td>
-                                    </tr>
-                                    <tr>
-                                        <td>--</td>
-                                        <td>--</td>
-                                        <td>--</td>
-                                    </tr>
-                                    <tr>
-                                        <td>--</td>
-                                        <td>--</td>
-                                        <td>--</td>
-                                    </tr>
-                                    <tr>
-                                        <td>--</td>
-                                        <td>--</td>
-                                        <td>--</td>
-                                    </tr>
-                                    <tr>
-                                        <td>--</td>
-                                        <td>--</td>
-                                        <td>--</td>
-                                    </tr>
-                                    <tr>
-                                        <td>--</td>
-                                        <td>--</td>
-                                        <td>--</td>
-                                    </tr>
-                                    <tr>
-                                        <td>--</td>
-                                        <td>--</td>
-                                        <td>--</td>
-                                    </tr>
-                                    <tr>
-                                        <td>--</td>
-                                        <td>--</td>
-                                        <td>--</td>
-                                    </tr>
-                                    <tr>
-                                        <td>--</td>
-                                        <td>--</td>
-                                        <td>--</td>
-                                    </tr>
+                                <tbody id="tableAttendanceMost">
+                                    
                                 </tbody>
                             </table>
 
@@ -264,6 +219,11 @@
     <script src="../archivosjs/congressHouse.js"></script>
     <script src="../archivosjs/statisticsFunctions.js"></script>
     <script src="../archivosjs/statisticsHouse.js"></script>
+    <script src="../archivosjs/renderTableAtGlance.js"></script>
+    <script src="../archivosjs/renderTableAttendance.js"></script>
+    <script src="../archivosjs/showRanderAttendanceLeast.js"></script>
+    <script src="../archivosjs/renderTableAttendanceMost.js"></script>
+    <script src="../archivosjs/showRanderAttendanceMost.js"></script>
 </body>
 
 </html>
