@@ -5,7 +5,7 @@ const renderTableAttendance = (data) => {
       let row = document.createElement("tr");
 
       let cellName = document.createElement("td");
-      cellName.appendChild(document.createTextNode(rowData.first_name));
+      cellName.appendChild(document.createTextNode(rowData.first_name + " " + (rowData.middle_name || " ") + " " + rowData.last_name));
       row.appendChild(cellName);
 
       let cellMissVotes = document.createElement("td");
