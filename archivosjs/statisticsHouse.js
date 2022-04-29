@@ -21,7 +21,7 @@ statistics.democratAverage = votesWithPartyAverageByParty(filterByParty(members,
 statistics.republicanAverage = votesWithPartyAverageByParty(filterByParty(members, "R"));
 statistics.independentAverage = votesWithPartyAverageByParty(filterByParty(members, "ID")) || 0;
 
-statistics.leastLoyal = tenPercentLoayaltyExtremeValues("least", [...members]);
+statistics.leastLoyal = tenPercentLoayaltyExtremeValues("least", [...members].filter((m) => m.votes_with_party_pct != 0));
 statistics.mostLoyal = tenPercentLoayaltyExtremeValues("most", [...members]);
 
 statistics.leastEngaged = tenPercentEngagementExtremeValues("least", [...members]);

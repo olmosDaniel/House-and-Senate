@@ -9,7 +9,7 @@ const renderTableLoyal = (data) => {
       row.appendChild(cellName);
 
       let cellMissVotes = document.createElement("td");
-      cellMissVotes.appendChild(document.createTextNode( rowData.total_votes && ((rowData.total_votes * 100) / rowData.votes_with_party_pct).toFixed(2)));
+      cellMissVotes.appendChild(document.createTextNode(Math.round((rowData.total_votes * rowData.votes_with_party_pct) / 100)));
       row.appendChild(cellMissVotes);
 
       let cellPercentage = document.createElement("td");

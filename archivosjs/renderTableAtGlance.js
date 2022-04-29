@@ -12,7 +12,7 @@ const renderTableAtGlance = (statistics) => {
     row1.appendChild(numberR);
 
     let averageR = document.createElement("td");
-    averageR.appendChild(document.createTextNode(statistics.republicanAverage));
+    averageR.appendChild(document.createTextNode(statistics.republicanAverage.toFixed(2)));
     row1.appendChild(averageR);
 
     tableBody.appendChild(row1);
@@ -28,7 +28,7 @@ const renderTableAtGlance = (statistics) => {
     row2.appendChild(numberD);
 
     let averageD = document.createElement("td");
-    averageD.appendChild(document.createTextNode(statistics.democratAverage));
+    averageD.appendChild(document.createTextNode(statistics.democratAverage.toFixed(2)));
     row2.appendChild(averageD);
 
     tableBody.appendChild(row2);
@@ -45,7 +45,7 @@ const renderTableAtGlance = (statistics) => {
     row3.appendChild(numberI);
 
     let averageI = document.createElement("td");
-    averageI.appendChild(document.createTextNode(statistics.independentAverage));
+    averageI.appendChild(document.createTextNode(statistics.independentAverage.toFixed(2)));
     row3.appendChild(averageI);
 
     tableBody.appendChild(row3);
@@ -62,7 +62,8 @@ const renderTableAtGlance = (statistics) => {
     row4.appendChild(numberT);
 
     let averageT = document.createElement("td");
-    averageT.appendChild(document.createTextNode(statistics.democratAverage + statistics.republicanAverage + statistics.independentAverage));
+    
+    averageT.appendChild(document.createTextNode((statistics.democratAverage + statistics.republicanAverage + statistics.independentAverage).toFixed(2)));
     row4.appendChild(averageT);
 
     tableBody.appendChild(row4);
