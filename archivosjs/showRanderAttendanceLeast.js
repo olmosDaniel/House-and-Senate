@@ -1,1 +1,0 @@
-renderTableAttendance(statistics.leastEngaged);

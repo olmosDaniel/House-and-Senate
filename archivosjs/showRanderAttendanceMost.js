@@ -1,1 +1,0 @@
-renderTableAttendanceMost(statistics.mostEngaged);
