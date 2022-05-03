@@ -1,13 +1,28 @@
-let data = [];
-let members = [];
+let URLHouse = "https://api.propublica.org/congress/v1/113/house/members"
+let URLSenate = "https://api.propublica.org/congress/v1/113/senate/members"
 
-if (typeof dataSenate !== 'undefined') {
-  data = dataSenate;
-  members = dataSenate.results[0].members;
+let init = {
+  method: "GET",
+  headers: {
+    "X-API-Key": "qR7MHWWmQT4a2czLZGDRrhTJcHUhbRd1FVBeocOw"
+  }
 }
-if (typeof dataHouse !== 'undefined') {
-  data = dataHouse;
-  members = dataHouse.results[0].members;
+
+
+let members = [];
+let retorno = []
+
+let statistics = {
+  numberOfDemocrats: 0,
+  numberOfRepublicans: 0,
+  numberOfIndependents: 0,
+  democratAverage: 0,
+  republicanAverage: 0,
+  independentAverage: 0,
+  leastLoyal: [],
+  mostLoyal: [],
+  leastEngaged: [],
+  mostEngaged: []
 }
 
 const showTable = (data) => {
@@ -46,7 +61,7 @@ const showTable = (data) => {
     );
     row.appendChild(cellTotal);
 
-    tableBody&&tableBody.appendChild(row);
+    tableBody && tableBody.appendChild(row);
   });
 
 };
@@ -67,33 +82,33 @@ const logicaFiltros = (data) => {
   retorno = data.results[0].members;//retorno viene de showtabledatasenate y showtabledatahouse
   //selected y arrayChecked tambien vienen de showtabledatasenate y showtabledatahouse
   if (selected === "" || selected === "Select state") {
-      if (arrayChecked.length <= 0) {
-          /*selected esta vacio y check tambien*/
-          retorno = data.results[0].members;
-      } else if (arrayChecked.length > 0) {
-          retorno = [];
-          /*selected esta vacio y check no*/
-          arrayChecked.forEach((ele) => {
-              retorno.push(
-                  ...data.results[0].members.filter((m) => m.party === ele)
-              );
-          });
-      }
+    if (arrayChecked.length <= 0) {
+      /*selected esta vacio y check tambien*/
+      retorno = data.results[0].members;
+    } else if (arrayChecked.length > 0) {
+      retorno = [];
+      /*selected esta vacio y check no*/
+      arrayChecked.forEach((ele) => {
+        retorno.push(
+          ...data.results[0].members.filter((m) => m.party === ele)
+        );
+      });
+    }
   } else {
-      if (arrayChecked.length <= 0) {
-          /*selected tiene algo y check esta vacio*/
-          retorno = retorno.filter((item) => item.state === selected);
-      } else if (arrayChecked.length > 0) {
-          retorno = [];
-          /*selected tiene algo y check tiene algo*/
-          arrayChecked.forEach((ele) => {
-              retorno.push(
-                  ...data.results[0].members.filter((m) => m.party === ele)
-              );
-          });
+    if (arrayChecked.length <= 0) {
+      /*selected tiene algo y check esta vacio*/
+      retorno = retorno.filter((item) => item.state === selected);
+    } else if (arrayChecked.length > 0) {
+      retorno = [];
+      /*selected tiene algo y check tiene algo*/
+      arrayChecked.forEach((ele) => {
+        retorno.push(
+          ...data.results[0].members.filter((m) => m.party === ele)
+        );
+      });
 
-          retorno = retorno.filter((item) => item.state === selected);
-      }
+      retorno = retorno.filter((item) => item.state === selected);
+    }
   }
 
   return retorno
@@ -102,51 +117,13 @@ const logicaFiltros = (data) => {
 //creo un option por cada estado en el select de id selectSenate
 const renderSelectOptions = (data) => {
   data.results[0].members.map(m => m.state).sort().filter((valor, index, array) => array.indexOf(valor) === index).forEach(state => {
-      let option = document.createElement("option");
-      option.setAttribute("value", state);
-      option.innerHTML = state;
-      document.getElementById("selectSenate")?.appendChild(option);
+    let option = document.createElement("option");
+    option.setAttribute("value", state);
+    option.innerHTML = state;
+    document.getElementById("selectSenate")?.appendChild(option);
   });
 }
 
-const handleFilterLogic = (data) => {
-  showTable(retorno);
-
-  const eventListenerDeSelect = () => {
-      select?.addEventListener('change', function () {
-          refreshTable(); //cada vez que se toca un select se crea una nueva tabla
-          selected = this.value;
-
-          showTable(logicaFiltros(data));
-      });
-  }
-
-  eventListenerDeCheckbox = () => {
-      checkbox.forEach((e) => {
-          e.addEventListener("change", function (event) {
-              //eventListenerDeSelect();
-              if (event.currentTarget.checked) {
-                  refreshTable(); //cada vez que se toca un checkbox se crea una nueva tabla
-                  arrayChecked.push(event.currentTarget.value);
-
-                  showTable(logicaFiltros(data));
-
-              } else {
-                  refreshTable(); //cada vez que se quita un checkbox se crea una nueva tabla
-                  //elimino un elemento del array
-                  arrayChecked = arrayChecked.filter((ele) => ele !== event.currentTarget.value);
-
-                  showTable(logicaFiltros(data));
-
-              }
-          });
-      });
-  }
-
-  renderSelectOptions(data);
-  eventListenerDeSelect();
-  eventListenerDeCheckbox();
-}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -154,16 +131,6 @@ const checkbox = document.getElementsByName("parties");
 const select = document.getElementById('selectSenate');
 let arrayChecked = [];
 let selected = "";
-let retorno = []
-
-if (typeof dataSenate !== 'undefined') {
-  retorno = dataSenate?.results[0].members;
-  handleFilterLogic(dataSenate);
-}
-if (typeof dataHouse !== 'undefined') {
-  retorno = dataHouse?.results[0].members;
-  handleFilterLogic(dataHouse);
-}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -192,7 +159,7 @@ const tenPercentLoayaltyExtremeValues = (loyalty, arr) => {
   //obtengo la repeticion de votes_with_party_pct a partir del primer 10%,
   //al ser un array ordenado sé que solo va a haber repetidos en posiciones consecutivas
   arr.map((e, i, a) => {
-    if (i-1 >= Math.trunc(tenPercent) - 1 && a[Math.trunc(tenPercent) - 1]?.votes_with_party_pct === e.votes_with_party_pct) {
+    if (i - 1 >= Math.trunc(tenPercent) - 1 && a[Math.trunc(tenPercent) - 1]?.votes_with_party_pct === e.votes_with_party_pct) {
       console.log("se repite desde tenPercentLoayaltyExtremeValues: ", e.votes_with_party_pct);
       count++;
     }
@@ -219,42 +186,15 @@ const tenPercentEngagementExtremeValues = (engaged, arr) => {
   //al ser un array ordenado sé que solo va a haber repetidos en posiciones consecutivas
   arr.map((e, i, a) => {
 
-    if (i-1 >= Math.trunc(tenPercent) - 1 && a[Math.trunc(tenPercent) - 1]?.missed_votes_pct === e.missed_votes_pct) {
+    if (i - 1 >= Math.trunc(tenPercent) - 1 && a[Math.trunc(tenPercent) - 1]?.missed_votes_pct === e.missed_votes_pct) {
       console.log("se repite desde tenPercentEngagementExtremeValues: ", e.missed_votes_pct);
       count++;
     }
   });
   console.log("veces: ", count);
 
-  return arr.slice(0, Math.floor(tenPercent+ count))
+  return arr.slice(0, Math.floor(tenPercent + count))
 };
-
-let statistics = {
-  numberOfDemocrats: 0,
-  numberOfRepublicans: 0,
-  numberOfIndependents: 0,
-  democratAverage: 0,
-  republicanAverage: 0,
-  independentAverage: 0,
-  leastLoyal: [], 
-  mostLoyal: [],
-  leastEngaged: [], 
-  mostEngaged: []
-}
-
-statistics.numberOfDemocrats = filterByParty(members, "D").length
-statistics.numberOfRepublicans = filterByParty(members, "R").length
-statistics.numberOfIndependents = filterByParty(members, "ID").length
-
-statistics.democratAverage = votesWithPartyAverageByParty(filterByParty(members, "D"));
-statistics.republicanAverage = votesWithPartyAverageByParty(filterByParty(members, "R"));
-statistics.independentAverage = votesWithPartyAverageByParty(filterByParty(members, "ID")) || 0;
-
-statistics.leastLoyal = tenPercentLoayaltyExtremeValues("least", [...members].filter((m) => m.votes_with_party_pct != 0));
-statistics.mostLoyal = tenPercentLoayaltyExtremeValues("most", [...members]);
-
-statistics.leastEngaged = tenPercentEngagementExtremeValues("least", [...members]);
-statistics.mostEngaged = tenPercentEngagementExtremeValues("most", [...members]);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -275,7 +215,7 @@ const renderTableAtGlance = (statistics) => {
   averageR.appendChild(document.createTextNode(statistics.republicanAverage.toFixed(2)));
   row1.appendChild(averageR);
 
-  tableBody&&tableBody.appendChild(row1);
+  tableBody && tableBody.appendChild(row1);
 
   let row2 = document.createElement("tr");
 
@@ -291,7 +231,7 @@ const renderTableAtGlance = (statistics) => {
   averageD.appendChild(document.createTextNode(statistics.democratAverage.toFixed(2)));
   row2.appendChild(averageD);
 
-  tableBody&&tableBody.appendChild(row2);
+  tableBody && tableBody.appendChild(row2);
 
   let row3 = document.createElement("tr");
 
@@ -308,7 +248,7 @@ const renderTableAtGlance = (statistics) => {
   averageI.appendChild(document.createTextNode(statistics.independentAverage.toFixed(2)));
   row3.appendChild(averageI);
 
-  tableBody&&tableBody.appendChild(row3);
+  tableBody && tableBody.appendChild(row3);
 
   let row4 = document.createElement("tr");
 
@@ -322,20 +262,18 @@ const renderTableAtGlance = (statistics) => {
   row4.appendChild(numberT);
 
   let averageT = document.createElement("td");
-  
+
   averageT.appendChild(document.createTextNode((statistics.democratAverage + statistics.republicanAverage + statistics.independentAverage).toFixed(2)));
   row4.appendChild(averageT);
 
-  tableBody&&tableBody.appendChild(row4);
+  tableBody && tableBody.appendChild(row4);
 
 };
-
-renderTableAtGlance(statistics);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const renderTableAttendance = (data) => {
-  
+
   let tableBody = document.getElementById("tableAttendance");
 
   data.map((rowData, i) => {
@@ -353,7 +291,7 @@ const renderTableAttendance = (data) => {
     cellPercentage.appendChild(document.createTextNode(rowData.missed_votes_pct));
     row.appendChild(cellPercentage);
 
-    tableBody&&tableBody.appendChild(row);
+    tableBody && tableBody.appendChild(row);
   });
 
 };
@@ -376,7 +314,7 @@ const renderTableLoyal = (data) => {
     cellPercentage.appendChild(document.createTextNode(rowData.votes_with_party_pct));
     row.appendChild(cellPercentage);
 
-    tableBody&&tableBody.appendChild(row);
+    tableBody && tableBody.appendChild(row);
   });
 
 };
@@ -399,7 +337,7 @@ const renderTableAttendanceMost = (data) => {
     cellPercentage.appendChild(document.createTextNode(rowData.missed_votes_pct));
     row.appendChild(cellPercentage);
 
-    tableBody&&tableBody.appendChild(row);
+    tableBody && tableBody.appendChild(row);
   });
 
 };
@@ -422,14 +360,113 @@ const renderTableLoyalMost = (data) => {
     cellPercentage.appendChild(document.createTextNode(rowData.votes_with_party_pct));
     row.appendChild(cellPercentage);
 
-    tableBody&&tableBody.appendChild(row);
+    tableBody && tableBody.appendChild(row);
   });
 
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-renderTableAttendance(statistics.leastEngaged);
-renderTableLoyal(statistics.leastLoyal);
-renderTableAttendanceMost(statistics.mostEngaged);
-renderTableLoyalMost(statistics.mostLoyal);
+
+const handleFilterLogic = (data) => {
+  showTable(retorno);
+
+  const eventListenerDeSelect = () => {
+    select?.addEventListener('change', function () {
+      refreshTable(); //cada vez que se toca un select se crea una nueva tabla
+      selected = this.value;
+
+      showTable(logicaFiltros(data));
+    });
+  }
+
+  eventListenerDeCheckbox = () => {
+    checkbox.forEach((e) => {
+      e.addEventListener("change", function (event) {
+        //eventListenerDeSelect();
+        if (event.currentTarget.checked) {
+          refreshTable(); //cada vez que se toca un checkbox se crea una nueva tabla
+          arrayChecked.push(event.currentTarget.value);
+
+          showTable(logicaFiltros(data));
+
+        } else {
+          refreshTable(); //cada vez que se quita un checkbox se crea una nueva tabla
+          //elimino un elemento del array
+          arrayChecked = arrayChecked.filter((ele) => ele !== event.currentTarget.value);
+
+          showTable(logicaFiltros(data));
+
+        }
+      });
+    });
+  }
+
+  renderSelectOptions(data);
+  eventListenerDeSelect();
+  eventListenerDeCheckbox();
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const renderLoading = (boolean) => {
+  const loading = document.getElementById("loading");
+  //render a loading that covers the whole page
+  if (boolean) {
+    loading.style.display = "";
+  }
+  else {
+    loading.style.display = "none";
+  }
+
+}
+
+renderLoading(true);
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const logicaFetch = (url) => {
+  fetch(url, init)
+    .then(response => response.json())
+    .then(data => {
+      console.log(data.results[0].members)
+
+      members = data.results[0].members;
+
+      statistics.numberOfDemocrats = filterByParty(members, "D").length
+      statistics.numberOfRepublicans = filterByParty(members, "R").length
+      statistics.numberOfIndependents = filterByParty(members, "ID").length
+
+      statistics.democratAverage = votesWithPartyAverageByParty(filterByParty(members, "D"));
+      statistics.republicanAverage = votesWithPartyAverageByParty(filterByParty(members, "R"));
+      statistics.independentAverage = votesWithPartyAverageByParty(filterByParty(members, "ID")) || 0;
+
+      statistics.leastLoyal = tenPercentLoayaltyExtremeValues("least", [...members].filter((m) => m.votes_with_party_pct != 0));
+      statistics.mostLoyal = tenPercentLoayaltyExtremeValues("most", [...members]);
+
+      statistics.leastEngaged = tenPercentEngagementExtremeValues("least", [...members]);
+      statistics.mostEngaged = tenPercentEngagementExtremeValues("most", [...members]);
+
+      showTable(members)
+      handleFilterLogic(data);
+
+      renderTableAtGlance(statistics);
+      renderTableAttendance(statistics.leastEngaged);
+      renderTableLoyal(statistics.leastLoyal);
+      renderTableAttendanceMost(statistics.mostEngaged);
+      renderTableLoyalMost(statistics.mostLoyal);
+
+      renderLoading(false);
+
+    })
+    .catch(error => console.warn(error))
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+let fromSenate = document.getElementById("Senate");
+if (fromSenate) {
+  logicaFetch(URLSenate);
+} else {
+  logicaFetch(URLHouse);
+}
