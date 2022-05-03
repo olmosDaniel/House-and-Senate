@@ -459,7 +459,10 @@ const logicaFetch = (url) => {
       renderLoading(false);
 
     })
-    .catch(error => console.warn(error))
+    .catch(error => {
+      console.warn(error)
+      renderLoading(false);
+    })
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
