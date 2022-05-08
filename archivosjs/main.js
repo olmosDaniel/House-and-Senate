@@ -1,13 +1,4 @@
-let URLHouse = "https://api.propublica.org/congress/v1/113/house/members"
-let URLSenate = "https://api.propublica.org/congress/v1/113/senate/members"
-
-let init = {
-  method: "GET",
-  headers: {
-    "X-API-Key": "qR7MHWWmQT4a2czLZGDRrhTJcHUhbRd1FVBeocOw"
-  }
-}
-
+/*
 
 let members = [];
 let retorno = []
@@ -25,48 +16,8 @@ let statistics = {
   mostEngaged: []
 }
 
-const showTable = (data) => {
-  let tableBody = document.getElementById("tableBody");
-
-  data.map((rowData, i) => {
-    let row = document.createElement("tr");
-
-    let cellFullName = document.createElement("td");
-    let a = document.createElement("a");
-    a.href = rowData.url;
-    a.innerText =
-      rowData.first_name +
-      " " +
-      (rowData.middle_name || " ") +
-      " " +
-      rowData.last_name;
-    cellFullName.appendChild(a);
-    row.appendChild(cellFullName);
-
-    let cellParty = document.createElement("td");
-    cellParty.appendChild(document.createTextNode(rowData.party));
-    row.appendChild(cellParty);
-
-    let cellState = document.createElement("td");
-    cellState.appendChild(document.createTextNode(rowData.state));
-    row.appendChild(cellState);
-
-    let cellSeniority = document.createElement("td");
-    cellSeniority.appendChild(document.createTextNode(rowData.seniority));
-    row.appendChild(cellSeniority);
-
-    let cellTotal = document.createElement("td");
-    cellTotal.appendChild(
-      document.createTextNode(rowData.votes_with_party_pct + " %")
-    );
-    row.appendChild(cellTotal);
-
-    tableBody && tableBody.appendChild(row);
-  });
-
-};
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/*creo una funcion que me permite eliminar la tabla y crear una nueva*/
+//creo una funcion que me permite eliminar la tabla y crear una nueva
 const refreshTable = () => {
   //elimino el tbody
   document.getElementById("tableBody").remove();
@@ -83,11 +34,11 @@ const logicaFiltros = (data) => {
   //selected y arrayChecked tambien vienen de showtabledatasenate y showtabledatahouse
   if (selected === "" || selected === "Select state") {
     if (arrayChecked.length <= 0) {
-      /*selected esta vacio y check tambien*/
+      //selected esta vacio y check tambien
       retorno = data.results[0].members;
     } else if (arrayChecked.length > 0) {
       retorno = [];
-      /*selected esta vacio y check no*/
+      //selected esta vacio y check no
       arrayChecked.forEach((ele) => {
         retorno.push(
           ...data.results[0].members.filter((m) => m.party === ele)
@@ -96,11 +47,11 @@ const logicaFiltros = (data) => {
     }
   } else {
     if (arrayChecked.length <= 0) {
-      /*selected tiene algo y check esta vacio*/
+      //selected tiene algo y check esta vacio
       retorno = retorno.filter((item) => item.state === selected);
     } else if (arrayChecked.length > 0) {
       retorno = [];
-      /*selected tiene algo y check tiene algo*/
+      //selected tiene algo y check tiene algo
       arrayChecked.forEach((ele) => {
         retorno.push(
           ...data.results[0].members.filter((m) => m.party === ele)
@@ -473,3 +424,166 @@ if (fromSenate) {
 } else {
   logicaFetch(URLHouse);
 }
+
+*/
+
+const { createApp } = Vue
+let URLHouse = "https://api.propublica.org/congress/v1/113/house/members"
+let URLSenate = "https://api.propublica.org/congress/v1/113/senate/members"
+
+let init = {
+  method: "GET",
+  headers: {
+    "X-API-Key": APIKey
+  }
+}
+
+const renderSelectOptions = (data) => {
+  data.map(m => m.state).sort().filter((valor, index, array) => array.indexOf(valor) === index).forEach(state => {
+    let option = document.createElement("option");
+    option.setAttribute("value", state);
+    option.innerHTML = state;
+    document.getElementById("selectSenate")?.appendChild(option);
+  });
+}
+
+createApp({
+  //variables
+  data() {
+    return {
+      isSenateView: "",
+      houses: [],
+      senates: [],
+      datos: [],
+      loading: true,
+      checkbox: {},
+      selected: "",
+      arrayChecked: [],
+    }
+  },
+
+  //antes del render
+  created() {
+
+  },
+
+  //despues del render
+  mounted() {
+
+    this.isSenateView = document.getElementById("Senate");
+    console.log(this.isSenateView)
+    //fetch data
+    if (!this.isSenateView) {
+      fetch(URLHouse, init)
+        .then(response => response.json())
+        .then(data => {
+          this.loading = false;
+          this.houses = data.results[0].members;
+          renderSelectOptions(this.houses);
+        })
+        .catch(error => {
+          this.loading = false;
+          console.warn(error);
+        })
+    } else {
+      console.log("es senaete")
+      fetch(URLSenate, init)
+        .then(response => response.json())
+        .then(data => {
+          this.loading = false;
+          this.senates = data.results[0].members;
+          renderSelectOptions(this.senates);
+        })
+        .catch(error => {
+          this.loading = false;
+          console.warn(error);
+        })
+    }
+
+    this.checkbox = document.getElementsByName("parties");
+    this.selected = document.getElementById("selectSenate")?.value;
+  },
+
+  //metodos
+  methods: {
+    clickButtonParty: function (e) {
+      if (e.target.checked) {
+        this.arrayChecked.push(e.target.value);
+        //showTable(logicaFiltros(data));
+      } else {
+        this.arrayChecked = this.arrayChecked.filter((ele) => ele !== e.target.value);
+        //showTable(logicaFiltros(data));
+      }
+    },
+
+    onSelectChange: function (e) {
+      this.selected = e.target.value;
+    }
+
+  },
+
+  computed: {
+
+    consoleLog: () => {
+      console.log("computed")
+    },
+
+    logicaFiltros: function () {
+
+      this.datos = [];
+      //selected y arrayChecked tambien vienen de showtabledatasenate y showtabledatahouse
+      if (this.selected === "" || this.selected === "Select state") {
+        if (this.arrayChecked.length <= 0) {
+          //selected esta vacio y check tambien
+          if (this.isSenateView) {
+            this.datos = this.senates;
+          } else {
+            this.datos = this.houses;
+          }
+        } else if (this.arrayChecked.length > 0) {
+          this.datos = [];
+          //selected esta vacio y check no
+          this.arrayChecked.forEach((ele) => {
+            if (this.isSenateView) {
+              this.datos.push(
+                ...this.senates.filter((m) => m.party === ele)
+              );
+            } else {
+              this.datos.push(
+                ...this.houses.filter((m) => m.party === ele)
+              );
+            }
+          });
+        }
+      } else {
+        if (this.arrayChecked.length <= 0) {
+          //selected tiene algo y check esta vacio
+          if (this.isSenateView) {
+            this.datos = this.senates.filter((m) => m.state === this.selected);
+          } else {
+            this.datos = this.houses.filter((item) => item.state === this.selected);
+          }
+        } else if (this.arrayChecked.length > 0) {
+          this.datos = [];
+          //selected tiene algo y check tiene algo
+          this.arrayChecked.forEach((ele) => {
+            if (this.isSenateView) {
+              this.datos.push(
+                ...this.senates.filter((m) => m.party === ele)
+              );
+            } else {
+              this.datos.push(
+                ...this.houses.filter((m) => m.party === ele)
+              );
+            }
+          });
+
+          this.datos = this.datos.filter((item) => item.state === this.selected);
+        }
+      }
+
+    }
+
+  },
+
+}).mount('#app')
