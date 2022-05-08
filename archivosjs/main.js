@@ -1,89 +1,22 @@
-/*
+const { createApp } = Vue
+let URLHouse = "https://api.propublica.org/congress/v1/113/house/members"
+let URLSenate = "https://api.propublica.org/congress/v1/113/senate/members"
 
-let members = [];
-let retorno = []
-
-let statistics = {
-  numberOfDemocrats: 0,
-  numberOfRepublicans: 0,
-  numberOfIndependents: 0,
-  democratAverage: 0,
-  republicanAverage: 0,
-  independentAverage: 0,
-  leastLoyal: [],
-  mostLoyal: [],
-  leastEngaged: [],
-  mostEngaged: []
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//creo una funcion que me permite eliminar la tabla y crear una nueva
-const refreshTable = () => {
-  //elimino el tbody
-  document.getElementById("tableBody").remove();
-  //creo un nuevo tbody
-  let tableB = document.createElement("tbody");
-  //le pongo el mismo id que tenia antes
-  tableB.setAttribute("id", "tableBody");
-  //agrego el tbody a la tabla
-  document.getElementById("tablecontainer").appendChild(tableB);
-};
-
-const logicaFiltros = (data) => {
-  retorno = data.results[0].members;//retorno viene de showtabledatasenate y showtabledatahouse
-  //selected y arrayChecked tambien vienen de showtabledatasenate y showtabledatahouse
-  if (selected === "" || selected === "Select state") {
-    if (arrayChecked.length <= 0) {
-      //selected esta vacio y check tambien
-      retorno = data.results[0].members;
-    } else if (arrayChecked.length > 0) {
-      retorno = [];
-      //selected esta vacio y check no
-      arrayChecked.forEach((ele) => {
-        retorno.push(
-          ...data.results[0].members.filter((m) => m.party === ele)
-        );
-      });
-    }
-  } else {
-    if (arrayChecked.length <= 0) {
-      //selected tiene algo y check esta vacio
-      retorno = retorno.filter((item) => item.state === selected);
-    } else if (arrayChecked.length > 0) {
-      retorno = [];
-      //selected tiene algo y check tiene algo
-      arrayChecked.forEach((ele) => {
-        retorno.push(
-          ...data.results[0].members.filter((m) => m.party === ele)
-        );
-      });
-
-      retorno = retorno.filter((item) => item.state === selected);
-    }
+let init = {
+  method: "GET",
+  headers: {
+    "X-API-Key": APIKey
   }
-
-  return retorno
 }
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//creo un option por cada estado en el select de id selectSenate
+
 const renderSelectOptions = (data) => {
-  data.results[0].members.map(m => m.state).sort().filter((valor, index, array) => array.indexOf(valor) === index).forEach(state => {
+  data.map(m => m.state).sort().filter((valor, index, array) => array.indexOf(valor) === index).forEach(state => {
     let option = document.createElement("option");
     option.setAttribute("value", state);
     option.innerHTML = state;
     document.getElementById("selectSenate")?.appendChild(option);
   });
 }
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-const checkbox = document.getElementsByName("parties");
-const select = document.getElementById('selectSenate');
-let arrayChecked = [];
-let selected = "";
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const filterByParty = (arr, party) => arr.filter((x) => x.party === party);
 
@@ -147,306 +80,6 @@ const tenPercentEngagementExtremeValues = (engaged, arr) => {
   return arr.slice(0, Math.floor(tenPercent + count))
 };
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-const renderTableAtGlance = (statistics) => {
-  let tableBody = document.getElementById("tableAtGlance");
-
-  let row1 = document.createElement("tr");
-
-  let cellKeyR = document.createElement("td");
-  cellKeyR.appendChild(document.createTextNode("Republican"));
-  row1.appendChild(cellKeyR);
-
-  let numberR = document.createElement("td");
-  numberR.appendChild(document.createTextNode(statistics.numberOfRepublicans));
-  row1.appendChild(numberR);
-
-  let averageR = document.createElement("td");
-  averageR.appendChild(document.createTextNode(statistics.republicanAverage.toFixed(2)));
-  row1.appendChild(averageR);
-
-  tableBody && tableBody.appendChild(row1);
-
-  let row2 = document.createElement("tr");
-
-  let cellKeyD = document.createElement("td");
-  cellKeyD.appendChild(document.createTextNode("Democrat"));
-  row2.appendChild(cellKeyD);
-
-  let numberD = document.createElement("td");
-  numberD.appendChild(document.createTextNode(statistics.numberOfDemocrats));
-  row2.appendChild(numberD);
-
-  let averageD = document.createElement("td");
-  averageD.appendChild(document.createTextNode(statistics.democratAverage.toFixed(2)));
-  row2.appendChild(averageD);
-
-  tableBody && tableBody.appendChild(row2);
-
-  let row3 = document.createElement("tr");
-
-  let cellKeyI = document.createElement("td");
-  cellKeyI.appendChild(document.createTextNode("Independent"));
-  row3.appendChild(cellKeyI);
-
-
-  let numberI = document.createElement("td");
-  numberI.appendChild(document.createTextNode(statistics.numberOfIndependents));
-  row3.appendChild(numberI);
-
-  let averageI = document.createElement("td");
-  averageI.appendChild(document.createTextNode(statistics.independentAverage.toFixed(2)));
-  row3.appendChild(averageI);
-
-  tableBody && tableBody.appendChild(row3);
-
-  let row4 = document.createElement("tr");
-
-  let cellKeyT = document.createElement("td");
-  cellKeyT.appendChild(document.createTextNode("Total"));
-  row4.appendChild(cellKeyT);
-
-
-  let numberT = document.createElement("td");
-  numberT.appendChild(document.createTextNode(statistics.numberOfIndependents + statistics.numberOfDemocrats + statistics.numberOfRepublicans));
-  row4.appendChild(numberT);
-
-  let averageT = document.createElement("td");
-
-  averageT.appendChild(document.createTextNode((statistics.democratAverage + statistics.republicanAverage + statistics.independentAverage).toFixed(2)));
-  row4.appendChild(averageT);
-
-  tableBody && tableBody.appendChild(row4);
-
-};
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-const renderTableAttendance = (data) => {
-
-  let tableBody = document.getElementById("tableAttendance");
-
-  data.map((rowData, i) => {
-    let row = document.createElement("tr");
-
-    let cellName = document.createElement("td");
-    cellName.appendChild(document.createTextNode(rowData.first_name + " " + (rowData.middle_name || " ") + " " + rowData.last_name));
-    row.appendChild(cellName);
-
-    let cellMissVotes = document.createElement("td");
-    cellMissVotes.appendChild(document.createTextNode(rowData.missed_votes));
-    row.appendChild(cellMissVotes);
-
-    let cellPercentage = document.createElement("td");
-    cellPercentage.appendChild(document.createTextNode(rowData.missed_votes_pct));
-    row.appendChild(cellPercentage);
-
-    tableBody && tableBody.appendChild(row);
-  });
-
-};
-
-const renderTableLoyal = (data) => {
-  let tableBody = document.getElementById("tableLoyal");
-
-  data.map((rowData, i) => {
-    let row = document.createElement("tr");
-
-    let cellName = document.createElement("td");
-    cellName.appendChild(document.createTextNode(rowData.first_name + " " + (rowData.middle_name || " ") + " " + rowData.last_name));
-    row.appendChild(cellName);
-
-    let cellMissVotes = document.createElement("td");
-    cellMissVotes.appendChild(document.createTextNode(Math.round((rowData.total_votes * rowData.votes_with_party_pct) / 100)));
-    row.appendChild(cellMissVotes);
-
-    let cellPercentage = document.createElement("td");
-    cellPercentage.appendChild(document.createTextNode(rowData.votes_with_party_pct));
-    row.appendChild(cellPercentage);
-
-    tableBody && tableBody.appendChild(row);
-  });
-
-};
-
-const renderTableAttendanceMost = (data) => {
-  let tableBody = document.getElementById("tableAttendanceMost");
-
-  data.map((rowData, i) => {
-    let row = document.createElement("tr");
-
-    let cellName = document.createElement("td");
-    cellName.appendChild(document.createTextNode(rowData.first_name + " " + (rowData.middle_name || " ") + " " + rowData.last_name));
-    row.appendChild(cellName);
-
-    let cellMissVotes = document.createElement("td");
-    cellMissVotes.appendChild(document.createTextNode(rowData.missed_votes));
-    row.appendChild(cellMissVotes);
-
-    let cellPercentage = document.createElement("td");
-    cellPercentage.appendChild(document.createTextNode(rowData.missed_votes_pct));
-    row.appendChild(cellPercentage);
-
-    tableBody && tableBody.appendChild(row);
-  });
-
-};
-
-const renderTableLoyalMost = (data) => {
-  let tableBody = document.getElementById("tableLoyalMost");
-
-  data.map((rowData, i) => {
-    let row = document.createElement("tr");
-
-    let cellName = document.createElement("td");
-    cellName.appendChild(document.createTextNode(rowData.first_name + " " + (rowData.middle_name || " ") + " " + rowData.last_name));
-    row.appendChild(cellName);
-
-    let cellMissVotes = document.createElement("td");
-    cellMissVotes.appendChild(document.createTextNode(Math.round((rowData.total_votes * rowData.votes_with_party_pct) / 100)));
-    row.appendChild(cellMissVotes);
-
-    let cellPercentage = document.createElement("td");
-    cellPercentage.appendChild(document.createTextNode(rowData.votes_with_party_pct));
-    row.appendChild(cellPercentage);
-
-    tableBody && tableBody.appendChild(row);
-  });
-
-};
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-const handleFilterLogic = (data) => {
-  showTable(retorno);
-
-  const eventListenerDeSelect = () => {
-    select?.addEventListener('change', function () {
-      refreshTable(); //cada vez que se toca un select se crea una nueva tabla
-      selected = this.value;
-
-      showTable(logicaFiltros(data));
-    });
-  }
-
-  eventListenerDeCheckbox = () => {
-    checkbox.forEach((e) => {
-      e.addEventListener("change", function (event) {
-        //eventListenerDeSelect();
-        if (event.currentTarget.checked) {
-          refreshTable(); //cada vez que se toca un checkbox se crea una nueva tabla
-          arrayChecked.push(event.currentTarget.value);
-
-          showTable(logicaFiltros(data));
-
-        } else {
-          refreshTable(); //cada vez que se quita un checkbox se crea una nueva tabla
-          //elimino un elemento del array
-          arrayChecked = arrayChecked.filter((ele) => ele !== event.currentTarget.value);
-
-          showTable(logicaFiltros(data));
-
-        }
-      });
-    });
-  }
-
-  renderSelectOptions(data);
-  eventListenerDeSelect();
-  eventListenerDeCheckbox();
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-const renderLoading = (boolean) => {
-  const loading = document.getElementById("loading");
-  //render a loading that covers the whole page
-  if (boolean) {
-    loading.style.display = "";
-  }
-  else {
-    loading.style.display = "none";
-  }
-
-}
-
-renderLoading(true);
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-const logicaFetch = (url) => {
-  fetch(url, init)
-    .then(response => response.json())
-    .then(data => {
-      console.log(data.results[0].members)
-
-      members = data.results[0].members;
-
-      statistics.numberOfDemocrats = filterByParty(members, "D").length
-      statistics.numberOfRepublicans = filterByParty(members, "R").length
-      statistics.numberOfIndependents = filterByParty(members, "ID").length
-
-      statistics.democratAverage = votesWithPartyAverageByParty(filterByParty(members, "D"));
-      statistics.republicanAverage = votesWithPartyAverageByParty(filterByParty(members, "R"));
-      statistics.independentAverage = votesWithPartyAverageByParty(filterByParty(members, "ID")) || 0;
-
-      statistics.leastLoyal = tenPercentLoayaltyExtremeValues("least", [...members].filter((m) => m.votes_with_party_pct != 0));
-      statistics.mostLoyal = tenPercentLoayaltyExtremeValues("most", [...members]);
-
-      statistics.leastEngaged = tenPercentEngagementExtremeValues("least", [...members]);
-      statistics.mostEngaged = tenPercentEngagementExtremeValues("most", [...members]);
-
-      showTable(members)
-      handleFilterLogic(data);
-
-      renderTableAtGlance(statistics);
-      renderTableAttendance(statistics.leastEngaged);
-      renderTableLoyal(statistics.leastLoyal);
-      renderTableAttendanceMost(statistics.mostEngaged);
-      renderTableLoyalMost(statistics.mostLoyal);
-
-      renderLoading(false);
-
-    })
-    .catch(error => {
-      console.warn(error)
-      renderLoading(false);
-    })
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-let fromSenate = document.getElementById("Senate");
-if (fromSenate) {
-  logicaFetch(URLSenate);
-} else {
-  logicaFetch(URLHouse);
-}
-
-*/
-
-const { createApp } = Vue
-let URLHouse = "https://api.propublica.org/congress/v1/113/house/members"
-let URLSenate = "https://api.propublica.org/congress/v1/113/senate/members"
-
-let init = {
-  method: "GET",
-  headers: {
-    "X-API-Key": APIKey
-  }
-}
-
-const renderSelectOptions = (data) => {
-  data.map(m => m.state).sort().filter((valor, index, array) => array.indexOf(valor) === index).forEach(state => {
-    let option = document.createElement("option");
-    option.setAttribute("value", state);
-    option.innerHTML = state;
-    document.getElementById("selectSenate")?.appendChild(option);
-  });
-}
-
 createApp({
   //variables
   data() {
@@ -459,6 +92,18 @@ createApp({
       checkbox: {},
       selected: "",
       arrayChecked: [],
+      statistics: {
+        numberOfDemocrats: 0,
+        numberOfRepublicans: 0,
+        numberOfIndependents: 0,
+        democratAverage: 0,
+        republicanAverage: 0,
+        independentAverage: 0,
+        leastLoyal: [],
+        mostLoyal: [],
+        leastEngaged: [],
+        mostEngaged: []
+      }
     }
   },
 
@@ -477,9 +122,25 @@ createApp({
       fetch(URLHouse, init)
         .then(response => response.json())
         .then(data => {
+          console.log("entra en house")
           this.loading = false;
           this.houses = data.results[0].members;
           renderSelectOptions(this.houses);
+          
+          this.statistics.numberOfDemocrats = filterByParty(this.houses, "D").length
+          this.statistics.numberOfRepublicans = filterByParty(this.houses, "R").length
+          this.statistics.numberOfIndependents = filterByParty(this.houses, "ID").length
+          
+          this.statistics.democratAverage = votesWithPartyAverageByParty(filterByParty(this.houses, "D"));
+          this.statistics.republicanAverage = votesWithPartyAverageByParty(filterByParty(this.houses, "R"));
+          this.statistics.independentAverage = votesWithPartyAverageByParty(filterByParty(this.houses, "ID")) || 0;
+          
+          this.statistics.leastLoyal = tenPercentLoayaltyExtremeValues("least", [...this.houses].filter((m) => m.votes_with_party_pct != 0));
+          this.statistics.mostLoyal = tenPercentLoayaltyExtremeValues("most", [...this.houses]);
+          
+          this.statistics.leastEngaged = tenPercentEngagementExtremeValues("least", [...this.houses]);
+          this.statistics.mostEngaged = tenPercentEngagementExtremeValues("most", [...this.houses]);
+
         })
         .catch(error => {
           this.loading = false;
@@ -493,6 +154,21 @@ createApp({
           this.loading = false;
           this.senates = data.results[0].members;
           renderSelectOptions(this.senates);
+
+          this.statistics.numberOfDemocrats = filterByParty(this.senates, "D").length
+          this.statistics.numberOfRepublicans = filterByParty(this.senates, "R").length
+          this.statistics.numberOfIndependents = filterByParty(this.senates, "ID").length
+          
+          this.statistics.democratAverage = votesWithPartyAverageByParty(filterByParty(this.senates, "D"));
+          this.statistics.republicanAverage = votesWithPartyAverageByParty(filterByParty(this.senates, "R"));
+          this.statistics.independentAverage = votesWithPartyAverageByParty(filterByParty(this.senates, "ID")) || 0;
+          
+          this.statistics.leastLoyal = tenPercentLoayaltyExtremeValues("least", [...this.senates].filter((m) => m.votes_with_party_pct != 0));
+          this.statistics.mostLoyal = tenPercentLoayaltyExtremeValues("most", [...this.senates]);
+          
+          this.statistics.leastEngaged = tenPercentEngagementExtremeValues("least", [...this.senates]);
+          this.statistics.mostEngaged = tenPercentEngagementExtremeValues("most", [...this.senates]);
+
         })
         .catch(error => {
           this.loading = false;
@@ -509,10 +185,8 @@ createApp({
     clickButtonParty: function (e) {
       if (e.target.checked) {
         this.arrayChecked.push(e.target.value);
-        //showTable(logicaFiltros(data));
       } else {
         this.arrayChecked = this.arrayChecked.filter((ele) => ele !== e.target.value);
-        //showTable(logicaFiltros(data));
       }
     },
 
@@ -524,8 +198,8 @@ createApp({
 
   computed: {
 
-    consoleLog: () => {
-      console.log("computed")
+    consoleLog: function () {
+      console.log("computed: ")
     },
 
     logicaFiltros: function () {

@@ -152,7 +152,7 @@
                   <tbody>
                   <tbody id="tableBody">
                     <tr v-for="data in datos">
-                      <th>{{data.first_name + " " + (data.middle_name || " ") + " " + data.last_name}}</th>
+                      <th><a v-bind:href="data.url">{{data.first_name + " " + (data.middle_name || " ") + " " + data.last_name}}</a></th>
                       <th>{{data.party}}</th>
                       <th>{{data.state}}</th>
                       <th>{{data.seniority}}</th>
