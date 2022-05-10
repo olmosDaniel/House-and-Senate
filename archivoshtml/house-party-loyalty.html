@@ -4,39 +4,14 @@
 <head>
     <link rel="stylesheet" href="../bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/estilos/styles.css">
+
     <title>House party loyalty</title>
 </head>
 
 <body id="House">
     <div id="app">
         <div id="House">
-            <div v-if="loading" class="spinner-grow" role="status" style="
-                position:fixed;
-                padding:0;
-                margin:0;
-                top:0;
-                left:0;
-                width: 100%;
-                height: 100%;
-                background:rgba(164, 225, 212, 0.8);
-                " id="loading">
-                <span class="sr-only">Loading...</span>
-            </div>
-
-            <div v-else="loading" class="spinner-grow" role="status" style="
-                position:fixed;
-                padding:0;
-                margin:0;
-                top:0;
-                left:0;
-                width: 100%;
-                height: 100%;
-                background:rgba(164, 225, 212, 0.8);
-                display: none;
-                " id="loading">
-                <span class="sr-only">Loading...</span>
-            </div>
-
             <main>
                 <div class="container my-5">
                     <header class="d-flex justify-content-between">
@@ -84,7 +59,10 @@
                         </ul>
                     </nav>
                     <!--Table container-->
-
+                    <div v-if="loading" class="loader">
+                        <div class="loaderBar"></div>
+                    </div>
+                    <div v-else="loading"></div>
                     <div>
                         <div class="container">
                             <div class="row">
@@ -128,7 +106,8 @@
                                                 <td>Total</td>
                                                 <td>{{statistics.numberOfRepublicans + statistics.numberOfDemocrats +
                                                     statistics.numberOfIndependents}}</td>
-                                                <td>{{(statistics.democratAverage + statistics.republicanAverage + statistics.independentAverage).toFixed(2)}}</td>
+                                                <td>{{(statistics.democratAverage + statistics.republicanAverage +
+                                                    statistics.independentAverage).toFixed(2)}}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -149,8 +128,10 @@
                                         </thead>
                                         <tbody id="tableLoyal">
                                             <tr v-for="rowData in statistics.leastLoyal">
-                                                <td>{{rowData.first_name + " " + (rowData.middle_name || " ") + " " + rowData.last_name}}</td>
-                                                <td>{{Math.round((rowData.total_votes * rowData.votes_with_party_pct) / 100)}}</td>
+                                                <td>{{rowData.first_name + " " + (rowData.middle_name || " ") + " " +
+                                                    rowData.last_name}}</td>
+                                                <td>{{Math.round((rowData.total_votes * rowData.votes_with_party_pct) /
+                                                    100)}}</td>
                                                 <td>{{rowData.votes_with_party_pct}}</td>
                                             </tr>
                                         </tbody>
@@ -168,8 +149,10 @@
                                         </thead>
                                         <tbody id="tableLoyalMost">
                                             <tr v-for="rowData in statistics.mostLoyal">
-                                                <td>{{rowData.first_name + " " + (rowData.middle_name || " ") + " " + rowData.last_name}}</td>
-                                                <td>{{Math.round((rowData.total_votes * rowData.votes_with_party_pct) / 100)}}</td>
+                                                <td>{{rowData.first_name + " " + (rowData.middle_name || " ") + " " +
+                                                    rowData.last_name}}</td>
+                                                <td>{{Math.round((rowData.total_votes * rowData.votes_with_party_pct) /
+                                                    100)}}</td>
                                                 <td>{{rowData.votes_with_party_pct}}</td>
                                             </tr>
                                         </tbody>

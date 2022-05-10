@@ -10,6 +10,8 @@
   <link rel="stylesheet" href="../bootstrap.min.css">
   <!-- <link rel="stylesheet" href="../font-awesome.min.css"> -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/estilos/styles.css">
+
   <title>Senate</title>
 
 </head>
@@ -17,33 +19,6 @@
 <body>
   <div id="app">
     <div id="Senate">
-      <div v-if="loading" class="spinner-grow" role="status" style="
-    position:fixed;
-    padding:0;
-    margin:0;
-    top:0;
-    left:0;
-    width: 100%;
-    height: 100%;
-    background:rgba(164, 225, 212, 0.8);
-    " id="loading">
-        <span class="sr-only">Loading...</span>
-      </div>
-
-      <div v-else="loading" class="spinner-grow" role="status" style="
-    position:fixed;
-    padding:0;
-    margin:0;
-    top:0;
-    left:0;
-    width: 100%;
-    height: 100%;
-    background:rgba(164, 225, 212, 0.8);
-    display: none;
-    " id="loading">
-        <span class="sr-only">Loading...</span>
-      </div>
-      
       <main>
         <div class="container my-5">
           <table id="senate-data"></table>
@@ -91,7 +66,10 @@
               </li>
             </ul>
           </nav>
-
+          <div v-if="loading" class="loader">
+            <div class="loaderBar"></div>
+          </div>
+          <div v-else="loading"></div>
           <!--Table container-->
 
           <div>
@@ -121,7 +99,7 @@
       <label>
         <input type="checkbox" name="senateTable" value="senateThree" id="senateThree">
       </label> -->
-      {{logicaFiltros}}
+            {{logicaFiltros}}
             <div v-on:click="clickButtonParty" class="form-check form-switch">
               <input class="form-check-input" name="parties" type="checkbox" value="D" id="flexCheckDefault">
               <label class="form-check-label" for="flexCheckDefault">
@@ -143,7 +121,8 @@
               </label>
             </div>
 
-            <select v-on:change="onSelectChange" class="form-select" aria-label="Default select example" id="selectSenate">
+            <select v-on:change="onSelectChange" class="form-select" aria-label="Default select example"
+              id="selectSenate">
               <option selected>Select state</option>
               <!-- cada opcion se llena automaticamente -->
             </select>
@@ -161,7 +140,8 @@
                 </thead>
                 <tbody id="tableBody">
                   <tr v-for="data in datos">
-                    <th> <a v-bind:href="data.url">{{data.first_name + " " + (data.middle_name || " ") + " " + data.last_name}} </a> </th>
+                    <th> <a v-bind:href="data.url">{{data.first_name + " " + (data.middle_name || " ") + " " +
+                        data.last_name}} </a> </th>
                     <th>{{data.party}}</th>
                     <th>{{data.state}}</th>
                     <th>{{data.seniority}}</th>
@@ -187,8 +167,8 @@
 
       <script src="../archivosjs/env.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-      crossorigin="anonymous"></script>
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
       <script src="https://unpkg.com/vue@3"></script>
       <script src="../archivosjs/main.js"></script>
     </div>
