@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="../bootstrap.min.css">
   <!-- <link rel="stylesheet" href="../font-awesome.min.css"> -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="/estilos/styles.css">
+  <link rel="stylesheet" href="../estilos/styles.css">
 
   <title>Senate</title>
 
@@ -66,10 +66,12 @@
               </li>
             </ul>
           </nav>
+          <div v-if="loading" class="bg-cover"></div>
           <div v-if="loading" class="loader">
-            <div class="loaderBar"></div>
+              <div class="inner one"></div>
+              <div class="inner two"></div>
+              <div class="inner three"></div>
           </div>
-          <div v-else="loading"></div>
           <!--Table container-->
 
           <div>
@@ -149,6 +151,8 @@
                   </tr>
                 </tbody>
               </table>
+              <div v-if="loading"><p>Loading...</p></div>
+              <div v-if="datos.length<1 && !loading"><p>There are no members in this section</p></div>
             </div>
           </div>
         </div>

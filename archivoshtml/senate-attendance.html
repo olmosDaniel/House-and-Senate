@@ -4,7 +4,7 @@
 <head>
     <link rel="stylesheet" href="../bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/estilos/styles.css">
+    <link rel="stylesheet" href="../estilos/styles.css">
 
     <title>Senate attendance</title>
 </head>
@@ -58,10 +58,12 @@
                             </li>
                         </ul>
                     </nav>
+                    <div v-if="loading" class="bg-cover"></div>
                     <div v-if="loading" class="loader">
-                        <div class="loaderBar"></div>
+                        <div class="inner one"></div>
+                        <div class="inner two"></div>
+                        <div class="inner three"></div>
                     </div>
-                    <div v-else="loading"></div>
                     <!--Table container-->
                     <div>
                         <div class="container">
@@ -147,6 +149,7 @@
                                             </tr>
                                         </tbody>
                                     </table>
+                                    <div v-if="loading"><p>Loading...</p></div>
                                 </div>
                                 <div class="col">
                                     <h2>Most Engaged (Top 10% Attendance)</h2>
@@ -166,6 +169,7 @@
                                             </tr>
                                         </tbody>
                                     </table>
+                                    <div v-if="loading"><p>Loading...</p></div>
                                 </div>
                             </div>
                         </div>
